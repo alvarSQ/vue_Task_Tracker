@@ -8,7 +8,6 @@
             name="Task"
             id="selectTask"
             v-model="tasksStore.selectSort"
-            @change="tasksStore.sorted(tasksStore.selectSort)"
           >
             <option value="id">Без сортировки</option>
             <option value="readytask">по выполнению</option>
