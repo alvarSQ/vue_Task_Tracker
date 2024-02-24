@@ -1,0 +1,47 @@
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 20px;
+
+  // default btn
+  &.btnDefault {
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.664);
+    // border: 1px solid #333333;
+    background-color: white;
+    margin-bottom: 15px;
+  }
+
+  // primary btn
+  &.btnPrimary {
+    color: #ffffff;
+    border: 1px solid #494ce8;
+    background-color: #494ce8;
+  }
+
+  // danger btn
+  &.btnDanger {
+    color: #ffffff;
+    border: 1px solid hsl(0, 48%, 48%);
+    background-color: #b53f3f;
+  }
+
+  &.btnWhite {
+    color: #333333;
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+  }
+
+
+  &:disabled,
+  &.disabled {
+    cursor: auto;
+    color: #ffffff;
+    border: 1px solid rgb(197, 196, 196);
+    background-color: rgb(197, 196, 196);
+  }
+}
