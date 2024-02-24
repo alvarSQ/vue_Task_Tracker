@@ -52,12 +52,9 @@ export const useTasksStore = defineStore('tasks', {
 
         getSortTasks(state) {
             return function (selectSort) {
-                let st
+                let st = state.tasks
                 if (this.getisChekReady) {
-                    st = state.tasks.filter(el => el.isReady === false)
-                }
-                else {
-                    st = state.tasks
+                    st = st.filter(el => el.isReady === false)
                 }
                 if (selectSort === 'readytask') {
                     st = this.sortByReadyTask(st)
@@ -73,9 +70,6 @@ export const useTasksStore = defineStore('tasks', {
         }
     },
     actions: {
-        sorted(selectSort) {
-            return this.getSortTasks(selectSort)
-        },
         addNewTask() {
             let pr = this.tags.find(el => el.isActive === true)
             const newTask = {
@@ -121,7 +115,6 @@ export const useTasksStore = defineStore('tasks', {
         },
         delTask(id) {
             this.tasks = this.tasks.filter(el => el.id !== id)
-            this.getSortTasks()
         },
         clearOdj() {
             this.newTaskObj.titleTask = ''
