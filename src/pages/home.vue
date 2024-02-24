@@ -7,7 +7,7 @@
           <select
             name="Task"
             id="selectTask"
-            v-model="tasksStore.selectSort"
+            v-model="selectSort"
           >
             <option value="id">Без сортировки</option>
             <option value="readytask">по выполнению</option>
@@ -36,7 +36,7 @@
             },
             task.title ? 'note-list' : ''
           ]"
-          v-for="task in tasksStore.getSortTasks(tasksStore.selectSort)"
+          v-for="task in tasksStore.getSortTasks(selectSort)"
           :key="task.id"
         >
           <template v-if="task.title">
@@ -79,17 +79,31 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted, watch, onUpdated, onUnmounted } from 'vue'
+<script>
 import { useTasksStore } from '@/store/index.js'
 import DelSelektTask from '@/pages/UI/DelSelektTask.vue'
 
-const tasksStore = useTasksStore()
 
-// onMounted(() => {
-//   tasksStore.getSortTasks;
-// })
-
+export default {
+  setup() {
+    const tasksStore = useTasksStore()
+    return {
+    tasksStore
+  }
+},
+  props: {},
+  components: {
+    DelSelektTask
+  },
+  data() {
+    return {
+      selectSort: 'id'
+    }
+  },
+  methods: {},
+  mounted() {},
+  watch: {}
+}
 </script>
 
 <style lang="scss">

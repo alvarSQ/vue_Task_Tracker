@@ -26,8 +26,6 @@ export const useTasksStore = defineStore('tasks', {
                 isActive: false
             }
         ],
-        selectSort: 'id',
-        id: 0,
         newTaskObj: {
             titleTask: '',
             descriptionTask: '',
