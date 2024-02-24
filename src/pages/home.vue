@@ -56,7 +56,7 @@
               <div class="cur-poi">
                 <!-- редактировать задачу -->
                 <router-link
-                  :to="{ name: 'editTask', params: { id: task.id } }"
+                  :to="{ name: 'editTask', params: { id: task.id,  } }"
                   @click="tasksStore.isEditTask = true"
                   >&#9997;</router-link
                 >
@@ -97,6 +97,11 @@ export default {
   },
   data() {
     return {
+       newTaskObj: {
+        titleTask: "",
+        descriptionTask: "",
+        deadLineTask: "",
+      },
       selectSort: 'id'
     }
   },

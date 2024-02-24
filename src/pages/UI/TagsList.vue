@@ -17,33 +17,14 @@
 </template>
 
 <script>
-import { useTasksStore } from "@/store/index.js";
-
-export default {
-  setup() {
-    const tasksStore = useTasksStore();
-    return {
-      tasksStore,
-    };
-  },
+export default {  
   emits: ["tagClick"],
   props: {
     items: {
       type: Array,
       reqired: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  components: {},
-  data() {
-    return {};
-  },
-  methods: {},
-  mounted() {},
-  watch: {},
+    }
+  }
 };
 </script>
 

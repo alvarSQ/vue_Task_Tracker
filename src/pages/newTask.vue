@@ -45,12 +45,7 @@ export default {
     TagsList,
   },
   data() {
-    return {
-      newTaskObj: {
-        titleTask: "",
-        descriptionTask: "",
-        deadLineTask: "",
-      },
+    return {     
       tags: [
         {
           title: "низкий",

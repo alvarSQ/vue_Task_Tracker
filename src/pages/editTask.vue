@@ -1,5 +1,5 @@
 <template>
-  <newTask v-if="hasTask"> 
+  <NewTask v-if="hasTask"> 
     <router-link 
         :to="{ name: 'home' }"
         class="btn btnPrimary"
@@ -8,43 +8,67 @@
       >
         Изменить задачу
       </router-link >
-  </newTask>
+  </NewTask>
   
   <notFound v-else />
 </template>
 
-<script setup>
+<script>
 import { onMounted, watch, computed, onUpdated, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import newTask from '@/pages/newTask.vue'
+import NewTask from '@/pages/newTask.vue'
 import notFound from '@/pages/notFound.vue'
 import { useTasksStore } from '@/store/index.js'
 
-const tasksStore = useTasksStore()
+export default {
+  setup() {
+    const tasksStore = useTasksStore();
+    
+    const router = useRouter()
+    const route = useRoute()
 
-const router = useRouter()
-const route = useRoute()
+    const id = computed(() => parseInt(route.params.id))
+    const validId = computed(() => /^[1-9]+\d*$/.test(id.value))
+    const task = computed(() => tasksStore.getTaskById(id.value))
+    const hasTask = computed(() => validId.value && task.value !== undefined)
 
-onMounted(() => {  
-  fillInputs()
-})
 
-const id = computed(() => parseInt(route.params.id))
-const validId = computed(() => /^[1-9]+\d*$/.test(id.value))
-const task = computed(() => tasksStore.getTaskById(id.value))
-const hasTask = computed(() => validId.value && task.value !== undefined)
-
-function fillInputs() {
-  tasksStore.getNewTaskObj.titleTask = task.value.title
-  tasksStore.getNewTaskObj.descriptionTask = task.value.description
-  tasksStore.getNewTaskObj.deadLineTask = task.value.deadLine
-  tasksStore.tags.forEach(el => (el.isActive = false))
-  tasksStore.tags.find(el => {
-    if (el.ind === task.value.priority) {
-      el.isActive = true
+    return {
+      tasksStore,
+      router,
+      route
+    };
+  },
+  props: {},
+  components: {
+    NewTask, notFound
+  },
+  data() {
+    return {
+      
+    };
+  },
+  methods: {
+    fillInputs() {
+      tasksStore.getNewTaskObj.titleTask = task.value.title
+      tasksStore.getNewTaskObj.descriptionTask = task.value.description
+      tasksStore.getNewTaskObj.deadLineTask = task.value.deadLine
+      tasksStore.tags.forEach(el => (el.isActive = false))
+      tasksStore.tags.find(el => {
+        if (el.ind === task.value.priority) {
+          el.isActive = true
+        }
+      })
     }
-  })
+  },
+  mounted() {
+    this.fillInputs()
+  },
+  watch: {},
 }
+
+
+
 
 // console.log(tasksStore.newTaskObj.titleTask)
 </script>
