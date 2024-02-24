@@ -1,52 +1,114 @@
 <template>
   <div class="note-form__wrapper">
-    <form
-      class="note-form"
-      @submit.prevent="tasksStore.addNewTask()"
-      v-if="!tasksStore.isCloseForm"
-    >
+    <form class="note-form" @submit.prevent="addNewTask()" v-if="!tasksStore.isCloseForm">
       <div class="top" @click="tasksStore.clearOdj">
         <router-link class="close" :to="{ name: 'home' }">&#10060;</router-link>
       </div>
       <!-- инпуты -->
-      <input
-        required
-        v-model="tasksStore.newTaskObj.titleTask"
-        placeholder="Название задачи..."
-      />
+      <input required v-model="newTaskObj.titleTask" placeholder="Название задачи..." />
       <textarea
         required
-        v-model="tasksStore.newTaskObj.descriptionTask"
+        v-model="newTaskObj.descriptionTask"
         placeholder="Описание задачи..."
       />
-      <input v-model="tasksStore.newTaskObj.deadLineTask" type="date" />
+      <input v-model="newTaskObj.deadLineTask" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
-      <TagsList :items="tasksStore.tags" />
+      <TagsList :items="tags" @tagClick="handleTagClick" />
       <button
         class="btn btnPrimary"
         type="submit"
-        :disabled="!tasksStore.newTaskObj.titleTask"
+        :disabled="!newTaskObj.titleTask"
         v-if="!tasksStore.isEditTask"
       >
         Добавить новую задачу
       </button>
-      <slot v-else/>
+      <slot v-else />
     </form>
   </div>
 </template>
 
-<script setup>
-import { onMounted, watch, computed, onUpdated, onUnmounted } from 'vue'
-import TagsList from '@/pages/UI/TagsList.vue'
-import { useTasksStore } from '@/store/index.js'
+<script>
+import { onMounted, watch, computed, onUpdated, onUnmounted } from "vue";
+import TagsList from "@/pages/UI/TagsList.vue";
+import { useTasksStore } from "@/store/index.js";
 
-const tasksStore = useTasksStore()
-
-onMounted(() => {  
-  tasksStore.clearOdj()
-})
-
+export default {
+  setup() {
+    const tasksStore = useTasksStore();
+    return {
+      tasksStore,
+    };
+  },
+  props: {},
+  components: {
+    TagsList,
+  },
+  data() {
+    return {
+      newTaskObj: {
+        titleTask: "",
+        descriptionTask: "",
+        deadLineTask: "",
+      },
+      tags: [
+        {
+          title: "низкий",
+          ind: 1,
+          isActive: false,
+        },
+        {
+          title: "средний",
+          ind: 2,
+          isActive: true,
+        },
+        {
+          title: "высокий",
+          ind: 3,
+          isActive: false,
+        },
+      ],
+    };
+  },
+  methods: {
+    addNewTask() {
+      const prior = this.tags.find((el) => el.isActive === true);
+      const newTask = {
+        id:
+          this.tasksStore.getTasks.reduce((max, el) => (el.id > max ? el.id : max), 0) +
+          1,
+        title: this.newTaskObj.titleTask,
+        description: this.newTaskObj.descriptionTask,
+        priority: prior.ind,
+        deadLine: this.newTaskObj.deadLineTask,
+        isEdit: false,
+        isReady: false,
+      };
+      if (this.newTaskObj.titleTask == "") {
+        return;
+      } else {
+        this.tasksStore.getTasks.push(newTask);
+      }
+      if (this.tasksStore.getTasks[0].title == "") {
+        this.tasksStore.getTasks.shift();
+      }
+      this.clearOdj();
+    },
+    handleTagClick(tag) {
+      this.tags.forEach((el) => (el.isActive = false));
+      tag.isActive = !tag.isActive;
+    },
+    clearOdj() {
+      this.newTaskObj.titleTask = "";
+      this.newTaskObj.descriptionTask = "";
+      this.newTaskObj.deadLineTask = "";
+    },
+  },
+  mounted() {
+    this.clearOdj();
+  },
+  watch: {},
+};
 </script>
 
 <style lang="scss">
@@ -65,7 +127,6 @@ onMounted(() => {
   cursor: pointer;
   background-color: white;
 }
-
 
 .deadline {
   margin-top: 5px;
@@ -94,7 +155,7 @@ onMounted(() => {
     color: #444ce0;
     cursor: default;
     &:before {
-      content: '#';
+      content: "#";
     }
   }
   &:last-child {

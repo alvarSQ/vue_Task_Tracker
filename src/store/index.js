@@ -8,29 +8,7 @@ export const useTasksStore = defineStore('tasks', {
                 title: ''
             }
         ],
-        tasksSort: null,
-        tags: [
-            {
-                title: 'низкий',
-                ind: 1,
-                isActive: false
-            },
-            {
-                title: 'средний',
-                ind: 2,
-                isActive: true
-            },
-            {
-                title: 'высокий',
-                ind: 3,
-                isActive: false
-            }
-        ],
-        newTaskObj: {
-            titleTask: '',
-            descriptionTask: '',
-            deadLineTask: ''
-        },
+        // tasksSort: null,        
         isCloseForm: false,
         isEditTask: true,
         isChekReady: false
@@ -39,7 +17,7 @@ export const useTasksStore = defineStore('tasks', {
         paths: ['tasks', 'selectSort', 'isEditTask', 'isChekReady'],
     },
     getters: {
-        getNewTaskObj: state => state.newTaskObj,
+        getTasks: state => state.tasks,
         getTaskById: state => id => state.tasks.find(el => el.id === id),
         getisChekReady: state => state.isChekReady,
 
@@ -67,28 +45,7 @@ export const useTasksStore = defineStore('tasks', {
             }
         }
     },
-    actions: {
-        addNewTask() {
-            let pr = this.tags.find(el => el.isActive === true)
-            const newTask = {
-                id: (this.tasks.reduce((max, el) => el.id > max ? el.id : max, 0)) + 1,
-                title: this.newTaskObj.titleTask,
-                description: this.newTaskObj.descriptionTask,
-                priority: pr.ind,
-                deadLine: this.newTaskObj.deadLineTask,
-                isEdit: false,
-                isReady: false
-            }
-            if (this.newTaskObj.titleTask == '') {
-                return
-            } else {
-                this.tasks.push(newTask)
-            }
-            if (this.tasks[0].title == '') {
-                this.tasks.shift()
-            }
-            this.clearOdj()
-        },
+    actions: {        
         saveTask(id) {
             let pr = this.tags.find(el => el.isActive === true)
             const newTask = {
@@ -113,16 +70,8 @@ export const useTasksStore = defineStore('tasks', {
         },
         delTask(id) {
             this.tasks = this.tasks.filter(el => el.id !== id)
-        },
-        clearOdj() {
-            this.newTaskObj.titleTask = ''
-            this.newTaskObj.descriptionTask = ''
-            this.newTaskObj.deadLineTask = ''
-        },
-        handleTagClick(tag) {
-            this.tags.forEach(el => el.isActive = false)
-            tag.isActive = !tag.isActive
-        },
+        },        
+        
     }
 })
 
