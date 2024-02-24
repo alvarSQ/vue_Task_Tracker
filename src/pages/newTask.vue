@@ -36,16 +36,36 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted, watch, computed, onUpdated, onUnmounted } from 'vue'
+<script>
 import TagsList from '@/pages/UI/TagsList.vue'
 import { useTasksStore } from '@/store/index.js'
 
-const tasksStore = useTasksStore()
-
-onMounted(() => {  
-  tasksStore.clearOdj()
-})
+export default {
+  setup() {
+    const tasksStore = useTasksStore()
+    return {
+    tasksStore
+  }
+},
+  props: {},
+  components: {
+    TagsList
+  },
+  data() {
+    return {
+      newTaskObj: {
+            titleTask: '',
+            descriptionTask: '',
+            deadLineTask: ''
+        },
+    }
+  },
+  methods: {},
+  mounted() {
+    this.tasksStore.clearOdj()
+  },
+  watch: {}
+}
 
 </script>
 

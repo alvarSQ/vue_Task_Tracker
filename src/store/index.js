@@ -26,11 +26,6 @@ export const useTasksStore = defineStore('tasks', {
                 isActive: false
             }
         ],
-        newTaskObj: {
-            titleTask: '',
-            descriptionTask: '',
-            deadLineTask: ''
-        },
         isCloseForm: false,
         isEditTask: true,
         isChekReady: false
