@@ -1,21 +1,17 @@
 <template>
-  <NewTask v-if="hasTask"> 
-    <router-link 
-        :to="{ name: 'home' }"
-        class="btn btnPrimary"
-        @click="tasksStore.saveTask(task.id)"
-        :class="{'disabled': !tasksStore.newTaskObj.titleTask}"
-      >
-        Изменить задачу
-      </router-link >
+  <NewTask v-if="hasTask" 
+  :newTask="newTaskObj" 
+  :tags="tags">
+    <router-link :to="{ name: 'home' }" class="btn btnPrimary" @click="tasksStore.saveTask(task.id)"
+      :class="{ 'disabled': !newTaskObj.titleTask }">
+      Изменить задачу
+    </router-link>
   </NewTask>
-  
+
   <notFound v-else />
 </template>
 
 <script>
-import { onMounted, watch, computed, onUpdated, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import NewTask from '@/pages/newTask.vue'
 import notFound from '@/pages/notFound.vue'
 import { useTasksStore } from '@/store/index.js'
@@ -23,20 +19,8 @@ import { useTasksStore } from '@/store/index.js'
 export default {
   setup() {
     const tasksStore = useTasksStore();
-    
-    const router = useRouter()
-    const route = useRoute()
-
-    const id = computed(() => parseInt(route.params.id))
-    const validId = computed(() => /^[1-9]+\d*$/.test(id.value))
-    const task = computed(() => tasksStore.getTaskById(id.value))
-    const hasTask = computed(() => validId.value && task.value !== undefined)
-
-
     return {
-      tasksStore,
-      router,
-      route
+      tasksStore
     };
   },
   props: {},
@@ -45,24 +29,64 @@ export default {
   },
   data() {
     return {
-      
+      newTaskObj: {
+        titleTask: "",
+        descriptionTask: "",
+        deadLineTask: "",
+      },
+      tags: [
+        {
+          title: "низкий",
+          ind: 1,
+          isActive: false,
+        },
+        {
+          title: "средний",
+          ind: 2,
+          isActive: true,
+        },
+        {
+          title: "высокий",
+          ind: 3,
+          isActive: false,
+        },
+      ],
     };
   },
   methods: {
     fillInputs() {
-      tasksStore.getNewTaskObj.titleTask = task.value.title
-      tasksStore.getNewTaskObj.descriptionTask = task.value.description
-      tasksStore.getNewTaskObj.deadLineTask = task.value.deadLine
-      tasksStore.tags.forEach(el => (el.isActive = false))
-      tasksStore.tags.find(el => {
-        if (el.ind === task.value.priority) {
+      this.newTaskObj.titleTask = this.task.title
+      this.newTaskObj.descriptionTask = this.task.description
+      this.newTaskObj.deadLineTask = this.task.deadLine
+      this.tags.forEach(el => (el.isActive = false))
+      this.tags.find(el => {
+        if (el.ind === this.task.priority) {
           el.isActive = true
         }
       })
-    }
+    },
+    clearOdj() {
+      this.newTaskObj.titleTask = "";
+      this.newTaskObj.descriptionTask = "";
+      this.newTaskObj.deadLineTask = "";
+    },
   },
   mounted() {
     this.fillInputs()
+  },
+  computed: {
+    id() {
+      return parseInt(this.$route.params.id);
+    },
+    validId() {
+      return /^[1-9]+\d*$/.test(this.id);
+    },
+    task() {
+      return this.tasksStore.getTaskById(this.id);
+    },
+    hasTask() {
+      return this.validId && this.task !== undefined;
+    }
   },
   watch: {},
 }

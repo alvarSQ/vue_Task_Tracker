@@ -5,20 +5,20 @@
         <router-link class="close" :to="{ name: 'home' }">&#10060;</router-link>
       </div>
       <!-- инпуты -->
-      <input required v-model="newTaskObj.titleTask" placeholder="Название задачи..." />
+      <input required v-model="newTask.titleTask" placeholder="Название задачи..." />
       <textarea
         required
-        v-model="newTaskObj.descriptionTask"
+        v-model="newTask.descriptionTask"
         placeholder="Описание задачи..."
       />
-      <input v-model="newTaskObj.deadLineTask" type="date" />
+      <input v-model="newTask.deadLineTask" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
       <TagsList :items="tags" @tagClick="handleTagClick" />
       <button
         class="btn btnPrimary"
         type="submit"
-        :disabled="!newTaskObj.titleTask"
+        :disabled="!newTask.titleTask"
         v-if="!tasksStore.isEditTask"
       >
         Добавить новую задачу
@@ -40,29 +40,22 @@ export default {
       tasksStore,
     };
   },
-  props: {},
+  props: {
+    newTask: {
+      type: Object,
+      reduce: true
+    },
+    tags: {
+      type: Array,
+      reduce: true
+    }
+  },
   components: {
     TagsList,
   },
   data() {
     return {     
-      tags: [
-        {
-          title: "низкий",
-          ind: 1,
-          isActive: false,
-        },
-        {
-          title: "средний",
-          ind: 2,
-          isActive: true,
-        },
-        {
-          title: "высокий",
-          ind: 3,
-          isActive: false,
-        },
-      ],
+      
     };
   },
   methods: {
@@ -92,16 +85,11 @@ export default {
     handleTagClick(tag) {
       this.tags.forEach((el) => (el.isActive = false));
       tag.isActive = !tag.isActive;
-    },
-    clearOdj() {
-      this.newTaskObj.titleTask = "";
-      this.newTaskObj.descriptionTask = "";
-      this.newTaskObj.deadLineTask = "";
-    },
+    },    
   },
-  mounted() {
-    this.clearOdj();
-  },
+  // mounted() {
+  //   this.clearOdj();
+  // },
   watch: {},
 };
 </script>
