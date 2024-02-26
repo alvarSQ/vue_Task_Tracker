@@ -5,58 +5,54 @@
         <router-link class="close" :to="{ name: 'home' }">&#10060;</router-link>
       </div>
       <!-- инпуты -->
-      <input required v-model="newTask.titleTask" placeholder="Название задачи..." />
-      <textarea
-        required
-        v-model="newTask.descriptionTask"
-        placeholder="Описание задачи..."
-      />
-      <input v-model="newTask.deadLineTask" type="date" />
+      <input v-model="newTaskObj.titleTask" placeholder="Название задачи..." />
+      <textarea v-model="newTaskObj.descriptionTask" placeholder="Описание задачи..." />
+      <input v-model="newTaskObj.deadLineTask" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
-      <TagsList :items="tags" @tagClick="handleTagClick" />
-      <button
-        class="btn btnPrimary"
-        type="submit"
-        :disabled="!newTask.titleTask"
-        v-if="!tasksStore.isEditTask"
-      >
+      <TagsList :tags="tags" @tagClick="handleTagClick" />
+      <button class="btn btnPrimary" type="submit" :disabled="!newTaskObj.titleTask" v-if="!tasksStore.isEditTask">
         Добавить новую задачу
       </button>
-      <slot v-else />
+      <slot v-else :newTaskObj="newTaskObj" />
     </form>
   </div>
 </template>
 
+<script setup>
+import { useTasksStore } from "@/store/index.js";
+const tasksStore = useTasksStore();
+</script>
+
+
+
 <script>
 import { onMounted, watch, computed, onUpdated, onUnmounted } from "vue";
 import TagsList from "@/pages/UI/TagsList.vue";
-import { useTasksStore } from "@/store/index.js";
+// import { useTasksStore } from "@/store/index.js";
 
-export default {
-  setup() {
-    const tasksStore = useTasksStore();
-    return {
-      tasksStore,
-    };
-  },
+export default {      
   props: {
-    newTask: {
-      type: Object,
-      reduce: true
-    },
+    // newTaskObj: {
+    //   type: Object,
+    //   reduce: true,
+    // },
     tags: {
       type: Array,
-      reduce: true
-    }
+      reduce: true,
+    },
   },
   components: {
     TagsList,
   },
   data() {
-    return {     
-      
-    };
+    return {
+      newTaskObj: {
+        titleTask: "",
+        descriptionTask: "",
+        deadLineTask: "",
+      }
+    }
   },
   methods: {
     addNewTask() {
@@ -65,14 +61,14 @@ export default {
         id:
           this.tasksStore.getTasks.reduce((max, el) => (el.id > max ? el.id : max), 0) +
           1,
-        title: this.newTaskObj.titleTask,
-        description: this.newTaskObj.descriptionTask,
+        title: this.titleTask,
+        description: this.descriptionTask,
         priority: prior.ind,
-        deadLine: this.newTaskObj.deadLineTask,
+        deadLine: this.deadLineTask,
         isEdit: false,
         isReady: false,
       };
-      if (this.newTaskObj.titleTask == "") {
+      if (this.titleTask == "") {
         return;
       } else {
         this.tasksStore.getTasks.push(newTask);
@@ -80,16 +76,14 @@ export default {
       if (this.tasksStore.getTasks[0].title == "") {
         this.tasksStore.getTasks.shift();
       }
-      this.clearOdj();
+      // this.clearOdj();
     },
     handleTagClick(tag) {
       this.tags.forEach((el) => (el.isActive = false));
       tag.isActive = !tag.isActive;
-    },    
+    },
   },
-  // mounted() {
-  //   this.clearOdj();
-  // },
+  mounted() { },
   watch: {},
 };
 </script>
@@ -98,10 +92,12 @@ export default {
 .task-ready {
   text-decoration: line-through;
 }
+
 .top {
   margin-top: -15px;
   margin-bottom: 5px;
 }
+
 .close {
   float: right;
   font-size: 12px;
@@ -129,18 +125,22 @@ export default {
   border-radius: 22px;
   user-select: none;
   cursor: pointer;
+
   &.isActive {
     background-color: #444ce0;
     color: #fff;
   }
+
   &.isPreview {
     padding: 0;
     color: #444ce0;
     cursor: default;
+
     &:before {
       content: "#";
     }
   }
+
   &:last-child {
     margin-right: 0;
   }

@@ -2,7 +2,7 @@
   <div class="tags-list">
     <div
       class="tag-item"
-      v-for="item in items"
+      v-for="item in tags"
       :key="item"
       @click="$emit('tagClick', item)"
       :class="{
@@ -20,7 +20,7 @@
 export default {  
   emits: ["tagClick"],
   props: {
-    items: {
+    tags: {
       type: Array,
       reqired: true,
     }

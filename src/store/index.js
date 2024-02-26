@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { nextTick } from 'vue'
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
@@ -20,6 +19,17 @@ export const useTasksStore = defineStore('tasks', {
         getTasks: state => state.tasks,
         getTaskById: state => id => state.tasks.find(el => el.id === id),
         getisChekReady: state => state.isChekReady,
+
+        setNewTask(state) {
+            return function (id, newTask) {
+                state.tasks = state.tasks.map(el => {
+                    if (el.id === id) {
+                        el = newTask
+                    }
+                    return el
+                })
+            }
+        },
 
         sortByReadyTask: state => st => st.toSorted((x, y) => x.isReady - y.isReady),
         sortByDeadLine: state => st => st.toSorted((x, y) => new Date(x.deadLine) - new Date(y.deadLine)),
@@ -45,33 +55,33 @@ export const useTasksStore = defineStore('tasks', {
             }
         }
     },
-    actions: {        
-        saveTask(id) {
-            let pr = this.tags.find(el => el.isActive === true)
-            const newTask = {
-                id: id,
-                title: this.newTaskObj.titleTask,
-                description: this.newTaskObj.descriptionTask,
-                priority: pr.ind,
-                deadLine: this.newTaskObj.deadLineTask,
-                isEdit: false,
-                isReady: false
-            }
-            if (this.newTaskObj.titleTask == '') {
-                return alert('Заполни все поля!')
-            } else {
-                this.tasks = this.tasks.map(el => {
-                    if (el.id === id) {
-                        el = newTask
-                    }
-                    return el
-                })
-            }
-        },
+    actions: {
+        // saveTask(id) {
+        //     let pr = this.tags.find(el => el.isActive === true)
+        //     const newTask = {
+        //         id: id,
+        //         title: this.newTaskObj.titleTask,
+        //         description: this.newTaskObj.descriptionTask,
+        //         priority: pr.ind,
+        //         deadLine: this.newTaskObj.deadLineTask,
+        //         isEdit: false,
+        //         isReady: false
+        //     }
+        //     if (this.newTaskObj.titleTask == '') {
+        //         return alert('Заполни все поля!')
+        //     } else {
+        //         this.tasks = this.tasks.map(el => {
+        //             if (el.id === id) {
+        //                 el = newTask
+        //             }
+        //             return el
+        //         })
+        //     }
+        // },
         delTask(id) {
             this.tasks = this.tasks.filter(el => el.id !== id)
-        },        
-        
+        },
+
     }
 })
 

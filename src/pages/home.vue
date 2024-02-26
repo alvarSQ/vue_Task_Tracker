@@ -60,18 +60,24 @@
   </div>
 </template>
 
+<script setup>
+import { useTasksStore } from "@/store/index.js";
+const tasksStore = useTasksStore();
+console.log();
+</script>
+
 <script>
-import { useTasksStore } from '@/store/index.js'
+// import { useTasksStore } from '@/store/index.js'
 import DelSelektTask from '@/pages/UI/DelSelektTask.vue'
 
 
 export default {
-  setup() {
-    const tasksStore = useTasksStore()
-    return {
-      tasksStore
-    }
-  },
+  // setup() {
+  //   const tasksStore = useTasksStore()
+  //   return {
+  //     tasksStore
+  //   }
+  // },
   props: {},
   components: {
     DelSelektTask
