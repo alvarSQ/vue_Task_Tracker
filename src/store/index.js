@@ -6,7 +6,7 @@ export const useTasksStore = defineStore('tasks', {
             {
                 title: ''
             }
-        ],       
+        ],
         isChekReady: false
     }),
     persist: {
