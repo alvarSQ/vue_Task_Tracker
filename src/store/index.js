@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { nextTick } from 'vue'
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
@@ -7,36 +6,17 @@ export const useTasksStore = defineStore('tasks', {
             {
                 title: ''
             }
-        ],
-        tasksSort: null,
-        tags: [
-            {
-                title: 'низкий',
-                ind: 1,
-                isActive: false
-            },
-            {
-                title: 'средний',
-                ind: 2,
-                isActive: true
-            },
-            {
-                title: 'высокий',
-                ind: 3,
-                isActive: false
-            }
-        ],
-        isCloseForm: false,
-        isEditTask: true,
+        ],       
         isChekReady: false
     }),
     persist: {
-        paths: ['tasks', 'selectSort', 'isEditTask', 'isChekReady'],
+        paths: ['tasks'],
     },
     getters: {
-        getNewTaskObj: state => state.newTaskObj,
+        getTasks: state => state.tasks,
         getTaskById: state => id => state.tasks.find(el => el.id === id),
         getisChekReady: state => state.isChekReady,
+        getDelTask: state => id => state.tasks.filter(el => el.id !== id),
 
         sortByReadyTask: state => st => st.toSorted((x, y) => x.isReady - y.isReady),
         sortByDeadLine: state => st => st.toSorted((x, y) => new Date(x.deadLine) - new Date(y.deadLine)),
@@ -63,60 +43,8 @@ export const useTasksStore = defineStore('tasks', {
         }
     },
     actions: {
-        addNewTask() {
-            let pr = this.tags.find(el => el.isActive === true)
-            const newTask = {
-                id: (this.tasks.reduce((max, el) => el.id > max ? el.id : max, 0)) + 1,
-                title: this.newTaskObj.titleTask,
-                description: this.newTaskObj.descriptionTask,
-                priority: pr.ind,
-                deadLine: this.newTaskObj.deadLineTask,
-                isEdit: false,
-                isReady: false
-            }
-            if (this.newTaskObj.titleTask == '') {
-                return
-            } else {
-                this.tasks.push(newTask)
-            }
-            if (this.tasks[0].title == '') {
-                this.tasks.shift()
-            }
-            this.clearOdj()
-        },
-        saveTask(id) {
-            let pr = this.tags.find(el => el.isActive === true)
-            const newTask = {
-                id: id,
-                title: this.newTaskObj.titleTask,
-                description: this.newTaskObj.descriptionTask,
-                priority: pr.ind,
-                deadLine: this.newTaskObj.deadLineTask,
-                isEdit: false,
-                isReady: false
-            }
-            if (this.newTaskObj.titleTask == '') {
-                return alert('Заполни все поля!')
-            } else {
-                this.tasks = this.tasks.map(el => {
-                    if (el.id === id) {
-                        el = newTask
-                    }
-                    return el
-                })
-            }
-        },
         delTask(id) {
-            this.tasks = this.tasks.filter(el => el.id !== id)
-        },
-        clearOdj() {
-            this.newTaskObj.titleTask = ''
-            this.newTaskObj.descriptionTask = ''
-            this.newTaskObj.deadLineTask = ''
-        },
-        handleTagClick(tag) {
-            this.tags.forEach(el => el.isActive = false)
-            tag.isActive = !tag.isActive
+            this.tasks = this.getDelTask(id)
         },
     }
 })

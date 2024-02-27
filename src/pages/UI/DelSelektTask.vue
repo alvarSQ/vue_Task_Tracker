@@ -1,9 +1,8 @@
 <template>
   <label class="chek">
     <input v-model="tasksStore.isChekReady" type="checkbox" />
-    Скрыть&#160;выполненные
+    Скрыть выполненные
   </label>
-  <!-- <el-checkbox class="chek" v-model="checked1" label="Скрыть выполненные" size="large" border/>     -->
 </template>
 
 <script setup>

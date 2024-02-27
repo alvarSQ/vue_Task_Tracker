@@ -1,82 +1,99 @@
 <template>
   <div class="note-form__wrapper">
-    <form
-      class="note-form"
-      @submit.prevent="tasksStore.addNewTask()"
-      v-if="!tasksStore.isCloseForm"
-    >
-      <div class="top" @click="tasksStore.clearOdj">
-        <router-link class="close" :to="{ name: 'home' }">&#10060;</router-link>
+    <form class="note-form" @submit.prevent="addNewTask()">
+      <div class="top">
+        <router-link class="close" :to="{ name: 'home' }" @click="clearInputs">&#10060;</router-link>
       </div>
       <!-- инпуты -->
-      <input
-        required
-        v-model="tasksStore.newTaskObj.titleTask"
-        placeholder="Название задачи..."
-      />
+      <input v-model="supportStore.getInputs.title" placeholder="Название задачи..." />
       <textarea
-        required
-        v-model="tasksStore.newTaskObj.descriptionTask"
+        v-model="supportStore.getInputs.description"
         placeholder="Описание задачи..."
       />
-      <input v-model="tasksStore.newTaskObj.deadLineTask" type="date" />
+      <input v-model="supportStore.getInputs.deadline" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
-      <TagsList :items="tasksStore.tags" />
+      <TagsList @tagClick="handleTagClick" />
       <button
         class="btn btnPrimary"
         type="submit"
-        :disabled="!tasksStore.newTaskObj.titleTask"
-        v-if="!tasksStore.isEditTask"
+        :disabled="!supportStore.getInputs.title"
+        v-if="!supportStore.getIsEditTask"
       >
         Добавить новую задачу
       </button>
-      <slot v-else/>
+      <slot v-else />
     </form>
   </div>
 </template>
 
-<script>
-import TagsList from '@/pages/UI/TagsList.vue'
-import { useTasksStore } from '@/store/index.js'
+<script setup></script>
 
-export default {
-  setup() {
-    const tasksStore = useTasksStore()
-    return {
-    tasksStore
-  }
-},
-  props: {},
+<script>
+import TagsList from "@/pages/UI/TagsList.vue";
+import { mapStores } from "pinia";
+import { useTasksStore } from "@/store/index.js";
+import { useSupportStore } from "@/store/supportVar.js";
+
+export default { 
   components: {
-    TagsList
+    TagsList,
   },
   data() {
-    return {
-      newTaskObj: {
-            titleTask: '',
-            descriptionTask: '',
-            deadLineTask: ''
-        },
-    }
+    return {};
   },
-  methods: {},
-  mounted() {
-    this.tasksStore.clearOdj()
+  computed: {
+    ...mapStores(useTasksStore, useSupportStore),
   },
-  watch: {}
-}
-
+  methods: {
+    addNewTask() {
+      const prior = this.supportStore.getTags.find((el) => el.isActive === true);
+      const newTask = {
+        id:
+          this.tasksStore.getTasks.reduce((max, el) => (el.id > max ? el.id : max), 0) +
+          1,
+        title: this.supportStore.getInputs.title,
+        description: this.supportStore.getInputs.description,
+        priority: prior.ind,
+        deadLine: this.supportStore.getInputs.deadline,
+        isEdit: false,
+        isReady: false,
+      };
+      if (this.supportStore.getInputs.title == "") {
+        return;
+      } else {
+        this.tasksStore.getTasks.push(newTask);
+      }
+      if (this.tasksStore.getTasks[0].title == "") {
+        this.tasksStore.getTasks.shift();
+      }
+      this.clearInputs();
+    },
+    clearInputs() {
+      this.supportStore.getInputs.title = "";
+      this.supportStore.getInputs.description = "";
+      this.supportStore.getInputs.deadline = "";
+    },
+    handleTagClick(tag) {
+      this.supportStore.getTags.forEach((el) => (el.isActive = false));
+      tag.isActive = !tag.isActive;
+    },
+  },
+  mounted() { this.clearInputs() },
+  watch: {},
+};
 </script>
 
 <style lang="scss">
 .task-ready {
   text-decoration: line-through;
 }
+
 .top {
   margin-top: -15px;
   margin-bottom: 5px;
 }
+
 .close {
   float: right;
   font-size: 12px;
@@ -85,7 +102,6 @@ export default {
   cursor: pointer;
   background-color: white;
 }
-
 
 .deadline {
   margin-top: 5px;
@@ -105,18 +121,22 @@ export default {
   border-radius: 22px;
   user-select: none;
   cursor: pointer;
+
   &.isActive {
     background-color: #444ce0;
     color: #fff;
   }
+
   &.isPreview {
     padding: 0;
     color: #444ce0;
     cursor: default;
+
     &:before {
-      content: '#';
+      content: "#";
     }
   }
+
   &:last-child {
     margin-right: 0;
   }
