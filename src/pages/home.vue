@@ -13,7 +13,9 @@
         </form>
         <DelSelektTask />
 
-        <router-link class="btn btnDefault" :to="{ name: 'newTask' }" @click="tasksStore.isEditTask = false">
+        <router-link class="btn btnDefault" :to="{ name: 'newTask'}"
+          @click="supportStore.isEditTask = false">
+
           Добавить новую задачу
         </router-link>
       </div>
@@ -39,8 +41,8 @@
                 </p>
                 <div class="cur-poi">
                   <!-- редактировать задачу -->
-                  <router-link :to="{ name: 'editTask', params: { id: task.id} }"
-                    @click="tasksStore.isEditTask = true">&#9997;</router-link>
+                  <router-link :to="{ name: 'editTask', params: { id: task.id } }"
+                    @click="supportStore.isEditTask = true">&#9997;</router-link>
                   <!-- удалить задачу -->
                   <span @click="tasksStore.delTask(task.id)">&#10060;</span>
                 </div>
@@ -61,23 +63,15 @@
 </template>
 
 <script setup>
+import { useSupportStore } from "@/store/supportVar.js";
 import { useTasksStore } from "@/store/index.js";
 const tasksStore = useTasksStore();
-console.log();
+const supportStore = useSupportStore();
 </script>
 
 <script>
-// import { useTasksStore } from '@/store/index.js'
 import DelSelektTask from '@/pages/UI/DelSelektTask.vue'
-
-
 export default {
-  // setup() {
-  //   const tasksStore = useTasksStore()
-  //   return {
-  //     tasksStore
-  //   }
-  // },
   props: {},
   components: {
     DelSelektTask
@@ -86,8 +80,7 @@ export default {
     return {
       selectSort: 'id'
     }
-  },
-  methods: {},
+  },  
   mounted() { },
   watch: {}
 }

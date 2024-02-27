@@ -163,6 +163,7 @@ section,
   color: black;
   border-radius: 15px;
   background: white;
+  white-space: nowrap;
   @media screen and (max-width: 770px) {
     width: 250Px;
   }

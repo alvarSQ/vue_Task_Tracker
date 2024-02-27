@@ -2,7 +2,7 @@
   <div class="tags-list">
     <div
       class="tag-item"
-      v-for="item in tags"
+      v-for="item in supportStore.getTags"
       :key="item"
       @click="$emit('tagClick', item)"
       :class="{
@@ -17,14 +17,16 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia';
+import { useSupportStore } from "@/store/supportVar.js";
 export default {  
   emits: ["tagClick"],
-  props: {
-    tags: {
-      type: Array,
-      reqired: true,
-    }
-  }
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapStores(useSupportStore),
+  },
 };
 </script>
 

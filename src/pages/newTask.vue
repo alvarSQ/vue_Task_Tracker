@@ -1,74 +1,65 @@
 <template>
   <div class="note-form__wrapper">
-    <form class="note-form" @submit.prevent="addNewTask()" v-if="!tasksStore.isCloseForm">
-      <div class="top" @click="tasksStore.clearOdj">
-        <router-link class="close" :to="{ name: 'home' }">&#10060;</router-link>
+    <form class="note-form" @submit.prevent="addNewTask()">
+      <div class="top">
+        <router-link class="close" :to="{ name: 'home' }" @click="clearInputs">&#10060;</router-link>
       </div>
       <!-- инпуты -->
-      <input v-model="newTaskObj.titleTask" placeholder="Название задачи..." />
-      <textarea v-model="newTaskObj.descriptionTask" placeholder="Описание задачи..." />
-      <input v-model="newTaskObj.deadLineTask" type="date" />
+      <input v-model="supportStore.getInputs.title" placeholder="Название задачи..." />
+      <textarea
+        v-model="supportStore.getInputs.description"
+        placeholder="Описание задачи..."
+      />
+      <input v-model="supportStore.getInputs.deadline" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
-      <TagsList :tags="tags" @tagClick="handleTagClick" />
-      <button class="btn btnPrimary" type="submit" :disabled="!newTaskObj.titleTask" v-if="!tasksStore.isEditTask">
+      <TagsList @tagClick="handleTagClick" />
+      <button
+        class="btn btnPrimary"
+        type="submit"
+        :disabled="!supportStore.getInputs.title"
+        v-if="!supportStore.getIsEditTask"
+      >
         Добавить новую задачу
       </button>
-      <slot v-else :newTaskObj="newTaskObj" />
+      <slot v-else />
     </form>
   </div>
 </template>
 
-<script setup>
-import { useTasksStore } from "@/store/index.js";
-const tasksStore = useTasksStore();
-</script>
-
-
+<script setup></script>
 
 <script>
-import { onMounted, watch, computed, onUpdated, onUnmounted } from "vue";
 import TagsList from "@/pages/UI/TagsList.vue";
-// import { useTasksStore } from "@/store/index.js";
+import { mapStores } from "pinia";
+import { useTasksStore } from "@/store/index.js";
+import { useSupportStore } from "@/store/supportVar.js";
 
-export default {      
-  props: {
-    // newTaskObj: {
-    //   type: Object,
-    //   reduce: true,
-    // },
-    tags: {
-      type: Array,
-      reduce: true,
-    },
-  },
+export default { 
   components: {
     TagsList,
   },
   data() {
-    return {
-      newTaskObj: {
-        titleTask: "",
-        descriptionTask: "",
-        deadLineTask: "",
-      }
-    }
+    return {};
+  },
+  computed: {
+    ...mapStores(useTasksStore, useSupportStore),
   },
   methods: {
     addNewTask() {
-      const prior = this.tags.find((el) => el.isActive === true);
+      const prior = this.supportStore.getTags.find((el) => el.isActive === true);
       const newTask = {
         id:
           this.tasksStore.getTasks.reduce((max, el) => (el.id > max ? el.id : max), 0) +
           1,
-        title: this.titleTask,
-        description: this.descriptionTask,
+        title: this.supportStore.getInputs.title,
+        description: this.supportStore.getInputs.description,
         priority: prior.ind,
-        deadLine: this.deadLineTask,
+        deadLine: this.supportStore.getInputs.deadline,
         isEdit: false,
         isReady: false,
       };
-      if (this.titleTask == "") {
+      if (this.supportStore.getInputs.title == "") {
         return;
       } else {
         this.tasksStore.getTasks.push(newTask);
@@ -76,14 +67,19 @@ export default {
       if (this.tasksStore.getTasks[0].title == "") {
         this.tasksStore.getTasks.shift();
       }
-      // this.clearOdj();
+      this.clearInputs();
+    },
+    clearInputs() {
+      this.supportStore.getInputs.title = "";
+      this.supportStore.getInputs.description = "";
+      this.supportStore.getInputs.deadline = "";
     },
     handleTagClick(tag) {
-      this.tags.forEach((el) => (el.isActive = false));
+      this.supportStore.getTags.forEach((el) => (el.isActive = false));
       tag.isActive = !tag.isActive;
     },
   },
-  mounted() { },
+  mounted() { this.clearInputs() },
   watch: {},
 };
 </script>
