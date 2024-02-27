@@ -7,6 +7,26 @@ export const useTasksStore = defineStore('tasks', {
                 title: ''
             }
         ],
+        tasksSort: null,
+        tags: [
+            {
+                title: 'низкий',
+                ind: 1,
+                isActive: false
+            },
+            {
+                title: 'средний',
+                ind: 2,
+                isActive: true
+            },
+            {
+                title: 'высокий',
+                ind: 3,
+                isActive: false
+            }
+        ],
+        isCloseForm: false,
+        isEditTask: true,
         isChekReady: false
     }),
     persist: {
