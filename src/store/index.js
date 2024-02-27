@@ -23,6 +23,17 @@ export const useTasksStore = defineStore('tasks', {
         sortById: state => st => st.toSorted((x, y) => x.id - y.id),
         sortByPriority: state => st => st.toSorted((x, y) => y.priority - x.priority),
 
+        setNewTask(state) {
+            return function (id, newTask) {
+                state.tasks = state.tasks.map(el => {
+                    if (el.id === id) {
+                        el = newTask
+                    }
+                    return el
+                })
+            }
+        },
+
         getSortTasks(state) {
             return function (selectSort) {
                 let st = state.tasks

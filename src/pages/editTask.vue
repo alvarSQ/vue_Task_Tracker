@@ -43,7 +43,7 @@ export default {
       } else {        
         this.tasksStore.setNewTask(id, newTask)
       }
-    },
+    },    
     fillInputs() {
       this.supportStore.getInputs.title = this.task.title
       this.supportStore.getInputs.description = this.task.description
