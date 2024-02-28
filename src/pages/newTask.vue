@@ -56,6 +56,8 @@ export default {
         description: this.supportStore.getInputs.description,
         priority: prior.ind,
         deadLine: this.supportStore.getInputs.deadline,
+        sortHandle: this.tasksStore.getTasks.reduce((max, el) => (el.sortHandle > max ? el.sortHandle : max), 0) +
+          1,
         isEdit: false,
         isReady: false,
       };
