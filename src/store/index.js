@@ -7,7 +7,8 @@ export const useTasksStore = defineStore('tasks', {
                 title: ''
             }
         ],
-        isChekReady: false
+        isChekReady: false,
+        selectSort: 'id'
     }),
     persist: {
         paths: ['tasks'],
@@ -23,6 +24,7 @@ export const useTasksStore = defineStore('tasks', {
         sortByDeadLine: state => st => st.toSorted((x, y) => new Date(x.deadLine) - new Date(y.deadLine)),
         sortById: state => st => st.toSorted((x, y) => x.id - y.id),
         sortByPriority: state => st => st.toSorted((x, y) => y.priority - x.priority),
+        sortBySortHandle: state => st => st.toSorted((x, y) => x.sortHandle - y.sortHandle),
 
         setNewTask(state) {
             return function (id, newTask) {
@@ -36,39 +38,46 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         getSortTasks(state) {
-            return function (selectSort) {
-                let st = state.tasks
-                if (this.getisChekReady) {
-                    st = st.filter(el => el.isReady === false)
-                }
-                if (selectSort === 'readytask') {
-                    st = this.sortByReadyTask(st)
-                } else if (selectSort === 'deadline') {
-                    st = this.sortByDeadLine(st)
-                } else if (selectSort === 'priority') {
-                    st = this.sortByPriority(st)
-                } else if (selectSort === 'id') {
-                    st = this.sortById(st)
-                }
-                return st
+            let st = state.getTasks
+            if (this.getisChekReady) {
+                st = st.filter(el => el.isReady === false)
             }
+            if (this.selectSort === 'readytask') {
+                st = this.sortByReadyTask(st)
+            } else if (this.selectSort === 'deadline') {
+                st = this.sortByDeadLine(st)
+            } else if (this.selectSort === 'priority') {
+                st = this.sortByPriority(st)
+            } else if (this.selectSort === 'id') {
+                st = this.sortById(st)
+            } else if (this.selectSort === 'hand') {
+                st = this.sortBySortHandle(st)
+            }
+            return st
         }
     },
     actions: {
+        handSort(val) {
+            if (this.getisChekReady) {
+                val = this.getTasks
+            }
+            this.isChekReady = false
+            this.selectSort = 'hand'
+            this.tasks = val
+        },
         delTask(id) {
             this.tasks = this.getDelTask(id)
         },
         sortChange() {
             this.tasks.sort((x, y) => y.priority - x.priority)
         },
-        detectEnd(e) {            
+        detectEnd(e) {
             const difference = e.newIndex - e.oldIndex
             const start = e.oldIndex + 1
             const maxSort = Math.max(...this.getTasks.map(el => el.sortHandle))
             const endMax = maxSort - this.getTasks.length + 1
             const end = e.newIndex + endMax
-            console.log(maxSort);
-            
+
             this.tasks = this.getTasks.map((el, i) => {
                 if (difference > 0) {
                     if (el.sortHandle > start && el.sortHandle <= end) {

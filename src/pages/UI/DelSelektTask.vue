@@ -1,6 +1,6 @@
 <template>
   <label class="chek">
-    <input v-model="tasksStore.isChekReady" type="checkbox" />
+    <input v-model="tasksStore.isChekReady" type="checkbox" :disabled="tasksStore.selectSort === 'hand'"/>
     Скрыть выполненные
   </label>
 </template>

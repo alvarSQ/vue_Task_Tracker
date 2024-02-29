@@ -4,11 +4,12 @@
     <div class="note-form">
       <div class="task-content">
         <form style="margin-bottom: 10px">
-          <select name="Task" id="selectTask" v-model="selectSort">
+          <select name="Task" id="selectTask" v-model="tasksStore.selectSort">
             <option value="id">Без сортировки</option>
             <option value="readytask">по выполнению</option>
             <option value="deadline">по дедлайну</option>
             <option value="priority">по приортету</option>
+            <option value="hand">вручную</option>
           </select>
         </form>
         <DelSelektTask />
@@ -19,7 +20,7 @@
         </router-link>
       </div>
 
-      <draggable v-model="tasksStore.tasks" tag="ul" item-key="id" @end="tasksStore.detectEnd">
+      <draggable v-model="compSortTasks" tag="ul" item-key="id" @end="tasksStore.detectEnd">
         <template #item="{ element: task }">
           <li :class="[
             {
@@ -56,55 +57,22 @@
             </div>
           </li>
         </template>
-      </draggable>
-
-      <!-- <ul>
-        <li :class="[
-          {
-            'low-prior': task.priority === 1,
-            'mid-prior': task.priority === 2,
-            'hi-prior': task.priority === 3
-          },
-          task.title ? 'note-list' : ''
-        ]" v-for="task in tasksStore.getSortTasks(selectSort)" :key="task.id">
-          <template v-if="task.title">
-            <div class="taskList">
-              <div class="navbar-content">
-                <div>
-                  <input style="margin-bottom: 0; text-align: center" type="checkbox" v-model="task.isReady"
-                    :name="task.title" />
-                </div>
-                <p class="title" :class="{ 'task-ready': task.isReady }">
-                  {{ task.title }}
-                </p>
-                <div class="cur-poi">
-                  
-                  <router-link :to="{ name: 'editTask', params: { id: task.id } }"
-                    @click="supportStore.isEditTask = true">&#9997;</router-link>
-                  
-                  <span @click="tasksStore.delTask(task.id)">&#10060;</span>
-                </div>
-              </div>
-              <template v-if="!task.isReady">
-                <div class="navbar-content">
-                  <p class="deadline" v-if="task.deadLine">
-                    Дедлайн: {{ task.deadLine }}
-                  </p>
-                </div>
-              </template>
-            </div>
-          </template>
-        </li>
-      </ul> -->
+      </draggable>      
     </div>
   </div>
 </template>
 
 <script setup>
+import { onMounted, watch, computed, onUpdated, onUnmounted } from 'vue'
 import { useSupportStore } from "@/store/supportVar.js";
 import { useTasksStore } from "@/store/index.js";
 const tasksStore = useTasksStore();
 const supportStore = useSupportStore();
+
+const compSortTasks = computed({
+  get: () => tasksStore.getSortTasks,
+  set: (val) => tasksStore.handSort(val),
+})
 </script>
 
 <script>
@@ -117,7 +85,7 @@ export default {
   },
   data() {
     return {
-      selectSort: 'id'
+      // selectSort: 'id'
     }
   },
   methods: {

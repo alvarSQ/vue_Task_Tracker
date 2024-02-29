@@ -6,20 +6,13 @@
       </div>
       <!-- инпуты -->
       <input v-model="supportStore.getInputs.title" placeholder="Название задачи..." />
-      <textarea
-        v-model="supportStore.getInputs.description"
-        placeholder="Описание задачи..."
-      />
+      <textarea v-model="supportStore.getInputs.description" placeholder="Описание задачи..." />
       <input v-model="supportStore.getInputs.deadline" type="date" />
       <!-- /инпуты -->
       <strong style="text-align: center">приоритет выполнения:</strong>
       <TagsList @tagClick="handleTagClick" />
-      <button
-        class="btn btnPrimary"
-        type="submit"
-        :disabled="!supportStore.getInputs.title"
-        v-if="!supportStore.getIsEditTask"
-      >
+      <button class="btn btnPrimary" type="submit" :disabled="!supportStore.getInputs.title"
+        v-if="!supportStore.getIsEditTask">
         Добавить новую задачу
       </button>
       <slot v-else />
@@ -35,7 +28,7 @@ import { mapStores } from "pinia";
 import { useTasksStore } from "@/store/index.js";
 import { useSupportStore } from "@/store/supportVar.js";
 
-export default { 
+export default {
   components: {
     TagsList,
   },
